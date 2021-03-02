@@ -119,7 +119,7 @@ public class Group {
 
     @Override
     public String toString() {
-        return "Group{" + "Id="+ id+
+        return "Group{" +
                 " name='" + name + '\'' +
                 ", direction='" + direction + '\'' +
                 ", startDate=" + startDate +
