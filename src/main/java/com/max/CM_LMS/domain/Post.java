@@ -4,6 +4,7 @@ import java.time.LocalDate;
 
 public class Post {
 
+    private Integer id;
     private String text;
     private LocalDate datePost;
 
@@ -26,6 +27,14 @@ public class Post {
 
     public void setDatePost(LocalDate datePost) {
         this.datePost = datePost;
+    }
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
     }
 
     @Override

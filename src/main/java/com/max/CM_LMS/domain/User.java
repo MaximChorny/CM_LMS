@@ -4,7 +4,7 @@ import java.time.LocalDate;
 import java.util.Objects;
 
 public abstract class User {
-
+    protected Integer id;
     protected String firstName;
     protected String lastName;
     protected LocalDate dateofBirth;
@@ -13,6 +13,14 @@ public abstract class User {
         this.firstName = firstName;
         this.lastName = lastName;
         this.dateofBirth = dateofBirth;
+    }
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
     }
 
     public String getFirstName() {

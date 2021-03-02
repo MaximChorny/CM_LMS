@@ -1,14 +1,22 @@
 package com.max.CM_LMS;
 
 import com.max.CM_LMS.domain.*;
+import com.max.CM_LMS.domain.dao.GroupDao;
+import com.max.CM_LMS.domain.dao.UserDao;
+import com.max.CM_LMS.domain.dao.inMemory.inMemoryGroupDao;
+import com.max.CM_LMS.domain.dao.inMemory.inMemoryUserDao;
+import com.max.CM_LMS.domain.persistence.Persistence;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
 
 public class Runner {
     public static void main(String[] args) {
+      /*  Persistence persistence = Persistence.getInstance();
+        Persistence persistence2 = Persistence.getInstance();
+        System.out.println(persistence);*/
+
         Group javaElementary =new Group("Java Elementary","Java",LocalDate.ofYearDay(2020,1));
         HomeworkTask hw1 = new HomeworkTask("do generic class", LocalDate.ofYearDay(2020, 10), "https://metanit.com/java/tutorial/3.11.php", LocalDate.ofYearDay(2020, 15));
         Lesson one = new Lesson("Generic", LocalDate.ofYearDay(2020, 05), "metanit.com/java/tutorial/3.11.php", hw1);
@@ -46,7 +54,35 @@ public class Runner {
         students.add(student5);
 
         javaElementary.setStudents(students);
-        System.out.println( javaElementary.toString());
+      //  System.out.println( javaElementary.toString());
+
+        Group gr1 = new Group("Begginer","Back-end",LocalDate.of(2009,12,13));
+        Group gr2 = new Group("Mid","Back-end2",LocalDate.of(2019,1,15));
+        Group gr3 = new Group("Senuior","application",LocalDate.of(2018,10,24));
+
+        GroupDao exDao = new inMemoryGroupDao();
+
+        exDao.saveGroup(gr1);
+        exDao.saveGroup(gr2);
+        exDao.saveGroup(gr3);
+
+      //  Persistence.printAll(Persistence.getGroups());
+
+        gr2.addTeacher(first);
+
+        exDao.updateGroup(gr2);
+
+
+
+       // Persistence.printAll(Persistence.getGroups());
+        UserDao userDaoExample = new inMemoryUserDao();
+
+        userDaoExample.saveUser(student1);
+        userDaoExample.saveUser(student2);
+        userDaoExample.saveUser(first);
+        userDaoExample.saveUser(student3);
+
+        Persistence.printAll(Persistence.getUsers());
 
 
     }

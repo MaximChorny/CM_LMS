@@ -4,6 +4,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 public class Feed {
+    Integer id;
     private Group group;
     private Set<Post> posts;
 
@@ -21,6 +22,14 @@ public class Feed {
 
     public Group getGroup() {
         return group;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
+    public Integer getId() {
+        return id;
     }
 
     public void addPost(Post post) {

@@ -43,7 +43,7 @@ public class Teacher extends User {
      }
     @Override
     public String toString() {
-        return "Teacher{" +
+        return "Teacher{" + "Id=" + getId() +
                 "role='" + role + '\'' +
                 ", groups=" + getAllGroupsName() +
                 ", firstName='" + firstName + '\'' +

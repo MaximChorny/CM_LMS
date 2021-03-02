@@ -4,6 +4,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 
 public class Lesson {
+    public Integer id;
     protected String topic;
     protected LocalDate date;
     protected String materials;
@@ -47,6 +48,14 @@ public class Lesson {
 
     public void setHomeworkTasks(ArrayList<HomeworkTask> homeworkTasks) {
         this.homeworkTasks = homeworkTasks;
+    }
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
     }
 
     public void giveHomework(HomeworkTask homework) {

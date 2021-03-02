@@ -7,7 +7,7 @@ import java.util.Objects;
 import java.util.Set;
 
 public class Group {
-
+    private Integer id;
     private String name;
     private String direction;
     private LocalDate startDate;
@@ -119,8 +119,8 @@ public class Group {
 
     @Override
     public String toString() {
-        return "Group{" +
-                "name='" + name + '\'' +
+        return "Group{" + "Id="+ id+
+                " name='" + name + '\'' +
                 ", direction='" + direction + '\'' +
                 ", startDate=" + startDate +
                 ", teachers=" + teachers +
@@ -147,5 +147,13 @@ public class Group {
     @Override
     public int hashCode() {
         return Objects.hash(name, direction, startDate, teachers, students, feed, lessons);
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public int getId() {
+        return id;
     }
 }
