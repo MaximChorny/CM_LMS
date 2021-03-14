@@ -29,7 +29,7 @@ public class inMemoryUserDao implements UserDao {
         if (Persistence.getUsers().containsKey(id)) {
             return Persistence.getUsers().get(id);
         }
-        throw new NoSuchElementException("Wrong id");
+       return null;
     }
 
     @Override

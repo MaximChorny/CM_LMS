@@ -1,6 +1,7 @@
 package com.max.CM_LMS.domain;
 
 import java.time.LocalDate;
+import java.util.Objects;
 
 public class Post {
 
@@ -43,5 +44,18 @@ public class Post {
                 "text='" + text + '\'' +
                 ", datePost=" + datePost +
                 '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Post post = (Post) o;
+        return Objects.equals(id, post.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
     }
 }

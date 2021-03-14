@@ -30,7 +30,7 @@ public class inMemoryGroupDao implements GroupDao {
         if(Persistence.getGroups().containsKey(id)) {
             return Persistence.getGroups().get(id);
         }
-        return new Group("Error","Err", LocalDate.MIN);
+        return null;
     }
 
     @Override

@@ -1,6 +1,5 @@
 package com.max.CM_LMS.domain.dao.inMemory;
 
-import com.max.CM_LMS.domain.HomeworkTask;
 import com.max.CM_LMS.domain.Lesson;
 import com.max.CM_LMS.domain.dao.LessonDao;
 import com.max.CM_LMS.domain.persistence.Persistence;
@@ -30,7 +29,7 @@ public class inMemoryLessonDao implements LessonDao {
         if (Persistence.getLessons().containsKey(id)) {
             return Persistence.getLessons().get(id);
         }
-         throw new NoSuchElementException("Wrong id");
+       return  null;
     }
 
     @Override

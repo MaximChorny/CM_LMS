@@ -9,7 +9,7 @@ public class Persistence {
 
     private static Map<Integer, Group> groupMap = new HashMap<>();
     private static Map<Integer, Feed> feedMap = new HashMap<>();
-    private static Map<Integer, HomeworkTask> homeworkTaskMap = new HashMap<>();
+    private static Map<Integer, HomeTask> homeTaskMap = new HashMap<>();
     private static Map<Integer, Lesson> lessonMap = new HashMap<>();
     private static Map<Integer, Post> postMap = new HashMap<>();
     private static Map<Integer, User> userMapMap = new HashMap<>();
@@ -26,8 +26,8 @@ public class Persistence {
         return lessonMap;
     }
 
-    public static Map<Integer, HomeworkTask> getHomeworkTasks() {
-        return homeworkTaskMap;
+    public static Map<Integer, HomeTask> getHomeworkTasks() {
+        return homeTaskMap;
     }
 
     public static  Map<Integer, Feed> getFeeds(){

@@ -7,22 +7,28 @@ import com.max.CM_LMS.domain.dao.inMemory.inMemoryGroupDao;
 import com.max.CM_LMS.domain.dao.inMemory.inMemoryUserDao;
 import com.max.CM_LMS.domain.persistence.Persistence;
 
+
 import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.Set;
 
 public class Runner {
+
     public static void main(String[] args) {
-      /*  Persistence persistence = Persistence.getInstance();
+
+       /* Persistence persistence = Persistence.getInstance();
         Persistence persistence2 = Persistence.getInstance();
         System.out.println(persistence);*/
 
-        Group javaElementary =new Group("Java Elementary","Java",LocalDate.ofYearDay(2020,1));
-        HomeworkTask hw1 = new HomeworkTask("do generic class", LocalDate.ofYearDay(2020, 10), "https://metanit.com/java/tutorial/3.11.php", LocalDate.ofYearDay(2020, 15));
-        Lesson one = new Lesson("Generic", LocalDate.ofYearDay(2020, 05), "metanit.com/java/tutorial/3.11.php", hw1);
+        Group javaElementary = new Group("Java Elementary","Java",LocalDate.ofYearDay(2020,1));
 
-        HomeworkTask hw2 = new HomeworkTask("Java core", LocalDate.ofYearDay(2020, 15), "https://habr.com/ru/post/354046/", LocalDate.ofYearDay(2020, 20));
-        Lesson two = new Lesson("Generic", LocalDate.ofYearDay(2020, 10), "metanit.com/java/tutorial/3.11.php", hw2);
+        Lesson one = new Lesson("Hello world!", LocalDate.ofYearDay(2020, 05), "metanit.com/java/tutorial/3.11.php");
+        HomeTask hw1 = new HomeTask(one, LocalDate.ofYearDay(2020, 15));
+        one.addHomeTask(hw1);
+
+        Lesson two = new Lesson("Generic", LocalDate.ofYearDay(2020, 10), "metanit.com/java/tutorial/3.11.php");
+        HomeTask hw2 = new HomeTask(two, LocalDate.ofYearDay(2020, 20));
+        two.addHomeTask(hw2);
 
         Teacher first = new Teacher("Qwerty", "Sanches", LocalDate.ofYearDay(1978, 325), "mentor");
         first.addGroup(javaElementary);
@@ -33,10 +39,17 @@ public class Runner {
         Student student4 = new Student("Pol", "Phayst", LocalDate.ofYearDay(2000, 200), javaElementary);
         Student student5 = new Student("Nicol", "Kidman", LocalDate.ofYearDay(1995, 98), javaElementary);
 
+        student1.addHomework(new HomeWork(student1, hw1, "Hello, word"));
+        student2.addHomework(new HomeWork(student2, hw1, "Hello, word!!"));
+        student3.addHomework(new HomeWork(student3, hw1, "Hello  "));
+        student4.addHomework(new HomeWork(student4, hw1, "Hello1111"));
+        student5.addHomework(new HomeWork(student5, hw1, "Hello "));
+
+
         Post firstPost = new Post("Hello",LocalDate.ofYearDay(2020,1));
         Post secondPost = new Post("Welcome, to the club,boddy",  LocalDate.ofYearDay(2020, 05));
 
-        Feed feed = new Feed(javaElementary );
+        Feed feed = new Feed(javaElementary);
         feed.addPost(firstPost);
         feed.addPost(secondPost);
 
@@ -46,7 +59,7 @@ public class Runner {
         javaElementary.addLeson(two);
 
         javaElementary.addTeacher(first);
-        Set<Student> students = new HashSet<Student>();
+        Set<Student> students = new HashSet<>();
         students.add(student1);
         students.add(student2);
         students.add(student3);
@@ -54,9 +67,9 @@ public class Runner {
         students.add(student5);
 
         javaElementary.setStudents(students);
-      //  System.out.println( javaElementary.toString());
+       System.out.println( javaElementary.toString());
 
-        Group gr1 = new Group("Begginer","Back-end",LocalDate.of(2009,12,13));
+      /*  Group gr1 = new Group("Begginer","Back-end",LocalDate.of(2009,12,13));
         Group gr2 = new Group("Mid","Back-end2",LocalDate.of(2019,1,15));
         Group gr3 = new Group("Senuior","application",LocalDate.of(2018,10,24));
 
@@ -82,7 +95,7 @@ public class Runner {
         userDaoExample.saveUser(first);
         userDaoExample.saveUser(student3);
 
-        Persistence.printAll(Persistence.getUsers());
+        Persistence.printAll(Persistence.getUsers());*/
 
 
     }

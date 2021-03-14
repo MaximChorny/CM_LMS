@@ -29,7 +29,7 @@ public class inMemoryPostDao implements PostDao {
         if (Persistence.getPosts().containsKey(id)) {
             return Persistence.getPosts().get(id);
         }
-        throw new NoSuchElementException("Wrong id");
+       return null;
     }
 
     @Override

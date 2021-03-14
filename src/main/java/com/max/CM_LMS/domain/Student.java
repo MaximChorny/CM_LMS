@@ -1,18 +1,22 @@
 package com.max.CM_LMS.domain;
 
 import java.time.LocalDate;
-import java.util.Objects;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Student extends User {
 
-
     private Group group;
+    private List<HomeWork> homeWorks;
 
-    public Student(String firstName, String lastName, LocalDate dateofBirth,Group group) {
+    public Student(String firstName, String lastName, LocalDate dateofBirth, Group group) {
         super(firstName, lastName, dateofBirth);
         this.group = group;
     }
 
+    public Student(String firstName, String lastName, LocalDate dateofBirth) {
+        super(firstName, lastName, dateofBirth);
+    }
 
 
     public Group getGroup() {
@@ -23,9 +27,20 @@ public class Student extends User {
         this.group = group;
     }
 
+    public boolean addHomework(HomeWork homeWork) {
+        if (homeWorks == null) {
+            homeWorks = new ArrayList<>();
+        }
+        return homeWorks.add(homeWork);
+    }
+
+    public List<HomeWork> getHomeWorks() {
+        return homeWorks;
+    }
+
     @Override
     public String toString() {
-        return "Student{" + "Id="+ super.getId()+
+        return "Student{" + "Id=" + super.getId() +
                 " , group=" + group.getName() +
                 ", firstName='" + firstName + '\'' +
                 ", lastName='" + lastName + '\'' +
@@ -33,17 +48,5 @@ public class Student extends User {
                 "} ";
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        if (!super.equals(o)) return false;
-        Student student = (Student) o;
-        return group.equals(student.group);
-    }
 
-    @Override
-    public int hashCode() {
-        return Objects.hash(super.hashCode(), group);
-    }
 }

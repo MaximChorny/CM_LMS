@@ -30,7 +30,7 @@ public class inMemoryFeedDao implements FeedDao {
         if (Persistence.getFeeds().containsKey(id)) {
             return Persistence.getFeeds().get(id);
         }
-        return new Feed(new Group("Error", "Err", LocalDate.MIN));
+        return null;
     }
 
     @Override

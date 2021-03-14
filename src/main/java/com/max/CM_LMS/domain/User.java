@@ -62,13 +62,11 @@ public abstract class User {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         User user = (User) o;
-        return firstName.equals(user.firstName) &&
-                lastName.equals(user.lastName) &&
-                dateofBirth.equals(user.dateofBirth);
+        return Objects.equals(id, user.id);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(firstName, lastName, dateofBirth);
+        return Objects.hash(id);
     }
 }
