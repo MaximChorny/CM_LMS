@@ -17,7 +17,7 @@ public class inMemoryPostDao implements PostDao {
     }
 
     @Override
-    public Post savePostTask(Post post) {
+    public Post savePost(Post post) {
         int newId = Persistence.getNewId(Persistence.getPosts());
         post.setId(newId);
         Persistence.getPosts().put(newId, post);

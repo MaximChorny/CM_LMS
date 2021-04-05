@@ -4,15 +4,24 @@ import java.time.LocalDate;
 import java.util.Objects;
 
 public abstract class User {
-    protected Integer id;
+    protected Integer id = 0;
     protected String firstName;
     protected String lastName;
     protected LocalDate dateofBirth;
+    protected String role;
 
     public User(String firstName, String lastName, LocalDate dateofBirth) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.dateofBirth = dateofBirth;
+    }
+
+    public User(Integer id, String firstName, String lastName, LocalDate dateofBirth, String role) {
+        this.id = id;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.dateofBirth = dateofBirth;
+        this.role = role;
     }
 
     public Integer getId() {
@@ -43,6 +52,14 @@ public abstract class User {
         return dateofBirth;
     }
 
+    public String getRole() {
+        return role;
+    }
+
+    public void setRole(String role) {
+        this.role = role;
+    }
+
     public void setDateofBirth(LocalDate dateofBirth) {
         this.dateofBirth = dateofBirth;
     }
@@ -50,10 +67,11 @@ public abstract class User {
     @Override
     public String toString() {
         return "User{" +
-                "firstName='" + firstName + '\'' +
+                "id=" + id +
+                ", firstName='" + firstName + '\'' +
                 ", lastName='" + lastName + '\'' +
                 ", dateofBirth=" + dateofBirth +
-                ", role='" +
+                ", role='" + role + '\'' +
                 '}';
     }
 
@@ -62,11 +80,11 @@ public abstract class User {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         User user = (User) o;
-        return Objects.equals(id, user.id);
+        return Objects.equals(id, user.id) && Objects.equals(firstName, user.firstName) && Objects.equals(lastName, user.lastName) && Objects.equals(dateofBirth, user.dateofBirth) && Objects.equals(role, user.role);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id);
+        return Objects.hash(id, firstName, lastName, dateofBirth, role);
     }
 }

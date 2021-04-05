@@ -5,7 +5,7 @@ import java.util.Objects;
 import java.util.Set;
 
 public class Feed {
-    Integer id;
+    Integer id = 0;
     private Group group;
     private Set<Post> posts;
 
@@ -31,6 +31,10 @@ public class Feed {
 
     public Integer getId() {
         return id;
+    }
+
+    public void setGroup(Group group) {
+        this.group = group;
     }
 
     public void addPost(Post post) {

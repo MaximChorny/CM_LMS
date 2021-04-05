@@ -8,25 +8,24 @@ import com.max.CM_LMS.domain.persistence.Persistence;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.NoSuchElementException;
 
 public class inMemoryHomeTaskDao implements HomeTaskDao {
 
     @Override
-    public List<HomeTaskDao> getAll() {
+    public List<HomeTask> getAll() {
         return new ArrayList(Persistence.getHomeworkTasks().values());
     }
 
     @Override
-    public HomeTask saveHomeTask(HomeTask hw) {
+    public HomeTask saveHomeTask(HomeTask homeTask) {
         int newId = Persistence.getNewId(Persistence.getHomeworkTasks());
-        hw.setId(newId);
-        Persistence.getHomeworkTasks().put(newId, hw);
-        return hw;
+        homeTask.setId(newId);
+        Persistence.getHomeworkTasks().put(newId, homeTask);
+        return homeTask;
     }
 
     @Override
-    public HomeTask geHomeTaskById(int id) {
+    public HomeTask getHomeTaskById(int id) {
         if (Persistence.getHomeworkTasks().containsKey(id)) {
             return Persistence.getHomeworkTasks().get(id);
         }
@@ -34,11 +33,11 @@ public class inMemoryHomeTaskDao implements HomeTaskDao {
     }
 
     @Override
-    public boolean updateHomeTask(HomeTask homew) {
-        int id = homew.getId();
+    public boolean updateHomeTask(HomeTask homeTask) {
+        int id = homeTask.getId();
         Map<Integer, HomeTask> hw = Persistence.getHomeworkTasks();
         if (hw.containsKey(id)) {
-            hw.put(id, homew);
+            hw.put(id, homeTask);
             return true;
         }
         return false;

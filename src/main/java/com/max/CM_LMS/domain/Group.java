@@ -8,9 +8,9 @@ import java.util.*;
 
 public class Group {
 
-    private  static  final Logger logger = LogManager.getLogger(Group.class);
+    private static final Logger logger = LogManager.getLogger(Group.class);
 
-    private Integer id;
+    private Integer id = 0;
     private String name;
     private String direction;
     private LocalDate startDate;
@@ -21,12 +21,13 @@ public class Group {
     private ArrayList<Lesson> lessons;
 
     public boolean addLeson(Lesson lesson) {
-     //   logger.info( lesson.toString());
+        //   logger.info( lesson.toString());
         if (this.lessons == null) {
             this.lessons = new ArrayList<>();
         }
         return this.lessons.add(lesson);
     }
+
     public boolean addStudent(Student student) {
 
         if (this.students == null) {
@@ -36,6 +37,7 @@ public class Group {
         return this.students.add(student);
 
     }
+
     public Group(String name, String direction, LocalDate startDate) {
         this.name = name;
         this.direction = direction;
@@ -99,7 +101,7 @@ public class Group {
         if (this.teachers == null) {
             this.teachers = new HashSet<>();
         }
-       return this.teachers.add(teacher);
+        return this.teachers.add(teacher);
 
     }
 
@@ -123,24 +125,25 @@ public class Group {
         this.startDate = startDate;
     }
 
-    private String getNameAllteachers() {
-        String res = "";
+    private String getAllTeachersNamesString() {
+        StringBuilder result = new StringBuilder();
+
         Iterator<Teacher> iterator = teachers.iterator();
         while (iterator.hasNext()) {
             Teacher item = iterator.next();
-            res += item.getFirstName() + " " + item.getLastName() + ", ";
+            result.append(item.getFirstName()).append(" ").append(item.getLastName()).append(", ");
         }
-        return res.substring(0,res.lastIndexOf(','));
+        return result.substring(0, result.length() - 2);
     }
 
-    private String getNameALLStudents() {
+    private String getAllStudentsNamesString() {
         String res = "";
         Iterator<Student> iterator = students.iterator();
         while (iterator.hasNext()) {
             Student item = iterator.next();
             res += item.getFirstName() + " " + item.getLastName() + ", ";
         }
-        return res.substring(0,res.lastIndexOf(','));
+        return res.substring(0, res.lastIndexOf(','));
     }
 
     @Override
@@ -149,8 +152,8 @@ public class Group {
                 " name='" + name + '\'' +
                 ", direction='" + direction + '\'' +
                 ", startDate=" + startDate +
-                ", teachers= " + getNameAllteachers() +
-                ", students= " + getNameALLStudents() +
+                ", teachers= " + getAllTeachersNamesString() +
+                ", students= " + getAllStudentsNamesString() +
                 ", feed=" + feed +
                 ", lessons=" + lessons +
                 '}';
@@ -174,7 +177,7 @@ public class Group {
         this.id = id;
     }
 
-    public int getId() {
+    public Integer getId() {
         return id;
     }
 }

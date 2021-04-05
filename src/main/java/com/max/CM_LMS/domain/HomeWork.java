@@ -1,19 +1,39 @@
 package com.max.CM_LMS.domain;
 
 
+import java.time.LocalDate;
 
 public class HomeWork {
-
-    Student student;
+    Integer id = 0;
+    Student author;
     HomeTask homeTask;
     String whatStudentDid;
-
+    LocalDate dateSubmitted;
     int mark;
 
+    public HomeWork()
+    {
+
+    }
     public HomeWork(Student student, HomeTask homeTask, String whatStudentDid) {
-        this.student = student;
+        this.author = student;
         this.homeTask = homeTask;
         this.whatStudentDid = whatStudentDid;
+    }
+
+    public HomeWork(Student student, HomeTask homeTask, String whatStudentDid, LocalDate date) {
+        this.author = student;
+        this.homeTask = homeTask;
+        this.whatStudentDid = whatStudentDid;
+        this.dateSubmitted =date;
+    }
+
+    public LocalDate getDateSubmitted() {
+        return dateSubmitted;
+    }
+
+    public void setDateSubmitted(LocalDate dateSubmitted) {
+        this.dateSubmitted = dateSubmitted;
     }
 
     public String getWhatStudentDid() {
@@ -24,12 +44,20 @@ public class HomeWork {
         this.whatStudentDid = whatStudentDid;
     }
 
-    public Student getStudent() {
-        return student;
+    public Student getAuthor() {
+        return author;
     }
 
-    public void setStudent(Student student) {
-        this.student = student;
+    public void setAuthor(Student author) {
+        this.author = author;
+    }
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
     }
 
     public HomeTask getHomeTask() {

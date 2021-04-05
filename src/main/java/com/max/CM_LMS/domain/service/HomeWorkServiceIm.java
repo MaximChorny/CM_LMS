@@ -14,7 +14,7 @@ public class HomeWorkServiceIm implements HomeWorkService {
     }
 
     @Override
-    public void estimateHomeWork(HomeWork homeWork, int mark) {
+    public void evaluateHomeWork(HomeWork homeWork, int mark) {
       homeWork.setMark(mark);
     }
 }

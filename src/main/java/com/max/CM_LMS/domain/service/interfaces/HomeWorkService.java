@@ -9,6 +9,6 @@ public interface HomeWorkService {
 
     boolean addHomeWorkToStudent(Student student, HomeTask homeTask, String str);
 
-    void estimateHomeWork(HomeWork homeWork, int mark);
+    void evaluateHomeWork(HomeWork homeWork, int mark);
 
 }

@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.Objects;
 
 public class Lesson {
-    public Integer id;
+    protected Integer id = 0;
     protected String topic;
     protected LocalDate date;
     protected String materials;
@@ -26,7 +26,6 @@ public class Lesson {
     public Lesson(String topic, LocalDate date) {
         this.topic = topic;
         this.date = date;
-        this.materials = materials;
     }
     public Lesson() {
     }

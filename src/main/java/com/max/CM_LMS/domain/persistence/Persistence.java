@@ -13,6 +13,11 @@ public class Persistence {
     private static Map<Integer, Lesson> lessonMap = new HashMap<>();
     private static Map<Integer, Post> postMap = new HashMap<>();
     private static Map<Integer, User> userMapMap = new HashMap<>();
+    private static Map<Integer, HomeWork> homeWorkMap = new HashMap<>();
+
+    public static Map<Integer, HomeWork> getHomeWorkMap() {
+        return homeWorkMap;
+    }
 
     public static Map<Integer, User> getUsers() {
         return userMapMap;
