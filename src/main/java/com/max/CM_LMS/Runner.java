@@ -3,9 +3,6 @@ package com.max.CM_LMS;
 import com.max.CM_LMS.domain.*;
 import com.max.CM_LMS.domain.dao.*;
 import com.max.CM_LMS.domain.dao.inDataBase.*;
-import com.max.CM_LMS.domain.dao.inMemory.inMemoryGroupDao;
-import com.max.CM_LMS.domain.dao.inMemory.inMemoryUserDao;
-import com.max.CM_LMS.domain.persistence.Persistence;
 
 
 import java.sql.*;
@@ -53,19 +50,20 @@ public class Runner {
         Lesson one = new Lesson("Hello world!", LocalDate.ofYearDay(2020, 05), "metanit.com/java/tutorial/3.11.php");
         HomeTask hw1 = new HomeTask(one, LocalDate.ofYearDay(2020, 15));
         one.addHomeTask(hw1);
-        LessonDao lessonDao = new inDataBaseLessonDao();
-      //  lessonDao.saveLessonTask(one);
-       // hw1.setLesson(one);
-         HomeTaskDao homeTaskDao = new inDataBaseHomeTaskDao();
-         //homeTaskDao.saveHomeTask(hw1);
+        LessonDao lessonDao = new JdbcLessonDaoImpl();
+        //  lessonDao.saveLessonTask(one);
+        // hw1.setLesson(one);
+        HomeTaskDao homeTaskDao = new JdbcHomeTaskImpl();
+        //homeTaskDao.saveHomeTask(hw1);
 
-           homeTaskDao.deleteHomeTaskById(2);
+        try {
+            homeTaskDao.deleteHomeTaskById(2);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
         Lesson two = new Lesson("Generic", LocalDate.ofYearDay(2020, 10), "metanit.com/java/tutorial/3.11.php");
         HomeTask hw2 = new HomeTask(two, LocalDate.ofYearDay(2020, 20));
-
-
-
 
 
         Teacher first = new Teacher("Qwerty", "Sanches", LocalDate.ofYearDay(1978, 325), "mentor");
@@ -76,15 +74,21 @@ public class Runner {
         Student student3 = new Student("Boris", "Russki", LocalDate.ofYearDay(1980, 244), javaElementary);
         Student student4 = new Student("Pol", "Phayst", LocalDate.ofYearDay(2000, 200), javaElementary);
         Student student5 = new Student("Nicol", "Kidman", LocalDate.ofYearDay(1995, 98), javaElementary);
-        UserDao userDao = new inDataBaseUserDao();
-      //  userDao.saveUser(student4);
+        UserDao userDao = new JdbcUserDaoImpl();
+        try {
+            userDao.updateUser(student3);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        //  userDao.saveUser(student4);
         //   userDao.saveUser(student1);
         //   student1.setFirstName("Morty22");
         //  student1.setRole("student2");
         // userDao.updateUser(student1);
         // userDao.updateUser(student2);
         //System.out.println(student1);
-          GroupDao groupDao = new inDataBaseGroupDao();
+        GroupDao groupDao = new JdbcGroupDaoImpl();
         //  groupDao.saveGroup(javaElementary);
         // javaElementary.setDirection("change dir to c++");
         //  Group proba = groupDao.getGroupById(222);
@@ -106,7 +110,7 @@ public class Runner {
 
         firstPost.setFeed(feed);
         firstPost.setAuthor(student4);
-        PostDao postDao = new inDataBasePostDao();
+        PostDao postDao = new JdbcPostDaoImpl();
         System.out.println();
 
         javaElementary.setFeed(feed);

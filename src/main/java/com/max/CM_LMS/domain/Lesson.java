@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.Objects;
 
 public class Lesson {
-    protected Integer id = 0;
+    protected Integer id = null;
     protected String topic;
     protected LocalDate date;
     protected String materials;

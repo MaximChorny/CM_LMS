@@ -4,7 +4,7 @@ package com.max.CM_LMS.domain;
 import java.time.LocalDate;
 
 public class HomeWork {
-    Integer id = 0;
+    Integer id = null;
     Student author;
     HomeTask homeTask;
     String whatStudentDid;

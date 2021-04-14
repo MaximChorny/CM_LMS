@@ -8,15 +8,15 @@ import java.sql.SQLException;
 import java.util.List;
 
 public interface HomeWorkDao {
-    List<HomeWork> getAll() throws SQLException;
+    List<HomeWork> getAll() throws Exception;
 
-    HomeWork save(HomeWork homeWork) throws SQLException;
+    HomeWork save(HomeWork homeWork) throws Exception;
 
-    HomeWork getHomeWork(int id) throws SQLException;
+    HomeWork getHomeWork(int id) throws Exception;
 
-    boolean updateHomeWork(HomeWork homeWork) throws SQLException;
+    boolean updateHomeWork(HomeWork homeWork) throws Exception;
 
-    boolean deleteHomeWorkById(int id) throws SQLException;
+    boolean deleteHomeWorkById(int id) throws Exception;
 
 
 }

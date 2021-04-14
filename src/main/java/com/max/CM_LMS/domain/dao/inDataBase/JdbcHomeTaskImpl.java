@@ -1,6 +1,7 @@
 package com.max.CM_LMS.domain.dao.inDataBase;
 
 import com.max.CM_LMS.domain.HomeTask;
+import com.max.CM_LMS.domain.Lesson;
 import com.max.CM_LMS.domain.dao.HomeTaskDao;
 
 import java.sql.*;
@@ -8,63 +9,57 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
-public class inDataBaseHomeTaskDao implements HomeTaskDao {
-    static final String URL = "jdbc:h2:file:C:\\Users\\Максим\\IdeaProjects\\CM_LMS\\src\\database\\please";
+public class JdbcHomeTaskImpl implements HomeTaskDao {
+    private final JdbcLessonDaoImpl lessonFromBase = new JdbcLessonDaoImpl();
 
-    private String getInsertMessageToSaveHomeTask() {
+    private String insertHomeTaskQuery() {
         return "insert into HOMETASK(task, date, \"deadLine\", id_lesson) VALUES ( ?, ?, ?, ? );";
     }
 
-    private String queryToUpdateHomeTask() {
+    private String UpdateHomeTaskQuery() {
         return "update HOMETASK set TASK = ?, DATE = ?, \"deadLine\" = ?, ID_LESSON = ?  where ID = ?;";
     }
 
-    private String queryToDeleteHomeTaskById() {
+    private String deleteHomeTaskByIdQuery() {
         return "delete from HOMETASK where id = ?;";
     }
 
     @Override
-    public List<HomeTask> getAll() throws SQLException {
+    public List<HomeTask> getAll() throws Exception {
         List<HomeTask> homeTasks = new ArrayList<>();
-        Connection connection = null;
-        try {
-            connection = DriverManager.getConnection(URL);
-        } catch (SQLException exception) {
-            exception.printStackTrace();
-        }
+
+        Connection connection = DbUtils.getConnection();
         Statement statement = connection.createStatement();
+
         String queryToSelect = "select *from HOMETASK;";
         ResultSet result = statement.executeQuery(queryToSelect);
-        HomeTask homeTask = new HomeTask("-1", LocalDate.now(), LocalDate.now());
-        while (result.next()){
+        HomeTask homeTask;
+        Lesson lesson = lessonFromBase.getLessonById(result.getInt(5));
+        if (lesson == null) {
+            return null;
+        }
+        while (result.next()) {
             homeTask = new HomeTask("-1", LocalDate.now(), LocalDate.now());
             homeTask.setId(result.getInt(1));
             homeTask.setTask(result.getString(2));
             homeTask.setDate(LocalDate.parse(result.getString(3)));
             homeTask.setDeadLine(LocalDate.parse(result.getString(4)));
-            homeTask.setLesson(new inDataBaseLessonDao().getLessonById(result.getInt(5)));
+            homeTask.setLesson(lesson);
             homeTasks.add(homeTask);
-        }
-        if(homeTask.getTask().equals("-1")){
-            return null;
         }
         return homeTasks;
     }
 
     @Override
-    public HomeTask saveHomeTask(HomeTask homeTask) throws SQLException {
-        if (homeTask.getId() != 0) {
+    public HomeTask saveHomeTask(HomeTask homeTask) throws Exception {
+        if (homeTask.getId() != 0 && homeTask.getId() != null) {
             updateHomeTask(homeTask);
             return homeTask;
         }
-        Connection connection = null;
-        try {
-            connection = DriverManager.getConnection(URL);
-        } catch (SQLException exception) {
-            exception.printStackTrace();
-        }
+        Connection connection = DbUtils.getConnection();
+
         /*get insert query*/
-        PreparedStatement statement = connection.prepareStatement(getInsertMessageToSaveHomeTask(), Statement.RETURN_GENERATED_KEYS);
+        PreparedStatement statement = connection.prepareStatement(insertHomeTaskQuery(), Statement.RETURN_GENERATED_KEYS);
         statement.setString(1, homeTask.getTask());
         statement.setString(2, homeTask.getDate().toString());
         statement.setString(3, homeTask.getDeadLine().toString());
@@ -90,43 +85,38 @@ public class inDataBaseHomeTaskDao implements HomeTaskDao {
 
 
     @Override
-    public HomeTask getHomeTaskById(int id) throws SQLException {
-        Connection connection = null;
-        try {
-            connection = DriverManager.getConnection(URL);
-        } catch (SQLException exception) {
-            exception.printStackTrace();
-        }
+    public HomeTask getHomeTaskById(int id) throws Exception {
+
+        Connection connection = DbUtils.getConnection();
         Statement statement = connection.createStatement();
+
         String query = "select *from HOMETASK where id = " + id + ";";
         ResultSet result = statement.executeQuery(query);
         HomeTask homeTask = new HomeTask("-1", LocalDate.now(), LocalDate.now());
+        Lesson lesson = lessonFromBase.getLessonById(result.getInt(5));
+        if (lesson == null) {
+            return null;
+        }
         while (result.next()) {
             homeTask.setId(result.getInt(1));
             homeTask.setTask(result.getString(2));
             homeTask.setDate(LocalDate.parse(result.getString(3)));
             homeTask.setDeadLine(LocalDate.parse(result.getString(4)));
-            homeTask.setLesson(new inDataBaseLessonDao().getLessonById(result.getInt(5)));
+            homeTask.setLesson(lesson);
         }
 
-        if(homeTask.getTask().equals("-1")){
-            return null;
-        }
         return homeTask;
     }
 
     @Override
-    public boolean updateHomeTask(HomeTask homeTask) throws SQLException {
-        if(homeTask.getId()==0){
-            return false;   
+    public boolean updateHomeTask(HomeTask homeTask) throws Exception {
+        if (homeTask.getId() == 0 || homeTask.getId() == null) {
+            return false;
         }
-        Connection connection = null;
-        try {
-            connection = DriverManager.getConnection(URL);
-        } catch (SQLException exception) {
-            exception.printStackTrace();
-        }
-        PreparedStatement statement = connection.prepareStatement(queryToUpdateHomeTask());
+
+        Connection connection = DbUtils.getConnection();
+        PreparedStatement statement = connection.prepareStatement(UpdateHomeTaskQuery());
+
         statement.setString(1, homeTask.getTask());
         statement.setString(2, homeTask.getDate().toString());
         statement.setString(3, homeTask.getDeadLine().toString());
@@ -134,26 +124,21 @@ public class inDataBaseHomeTaskDao implements HomeTaskDao {
         int res = -999;
         try {
             res = statement.executeUpdate();
-        } catch (Exception e){
+        } catch (Exception e) {
             System.out.println("wrong parameters in homeTask");
             e.printStackTrace();
-        }
-        finally {
+        } finally {
             return res > 0;
         }
     }
 
 
     @Override
-    public boolean deleteHomeTaskById(int id) throws SQLException {
-        Connection connection = null;
-        try {
-            connection = DriverManager.getConnection(URL);
-        } catch (SQLException exception) {
-            exception.printStackTrace();
-        }
+    public boolean deleteHomeTaskById(int id) throws Exception {
+        Connection connection = DbUtils.getConnection();
+
         /*get insert query*/
-        PreparedStatement statement = connection.prepareStatement(queryToDeleteHomeTaskById());
+        PreparedStatement statement = connection.prepareStatement(deleteHomeTaskByIdQuery());
         /* set id*/
         statement.setString(1, Integer.toString(id));
         int result = -999;
@@ -162,11 +147,6 @@ public class inDataBaseHomeTaskDao implements HomeTaskDao {
         } catch (SQLException exception) {
             exception.printStackTrace();
         }
-        /*
-         *
-         *
-         *
-         */
         return result > 0;
     }
 

@@ -23,6 +23,10 @@ public class Teacher extends User {
         this.role = role;
     }
 
+    public Set<Group> getGroups() {
+        return this.groups;
+    }
+
     public void addGroup(Group group) {
         if (this.groups == null) {
             this.groups = new HashSet<>();
@@ -30,17 +34,15 @@ public class Teacher extends User {
         groups.add(group);
     }
 
-    public Set<Group> getGroups() {
-        return this.groups;
-    }
-   private String getAllGroupsName(){
-         Set<Group> buffer = this.groups;
-         String res = "";
-         for (Group s : buffer){
-             res += s.getName();
-         }
+    private String getAllGroupsName() {
+        Set<Group> buffer = this.groups;
+        String res = "";
+        for (Group s : buffer) {
+            res += s.getName();
+        }
         return res;
-     }
+    }
+
     @Override
     public String toString() {
         return "Teacher{" +

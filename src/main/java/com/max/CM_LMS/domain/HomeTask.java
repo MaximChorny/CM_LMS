@@ -5,7 +5,7 @@ import java.util.Objects;
 
 public class HomeTask {
 
-    private Integer id = 0;
+    private Integer id = null;
     private String task;
     private LocalDate date;
     private LocalDate deadLine;
@@ -66,7 +66,6 @@ public class HomeTask {
     }
 
     public void setTask(String task) {
-
         this.task = task;
     }
 

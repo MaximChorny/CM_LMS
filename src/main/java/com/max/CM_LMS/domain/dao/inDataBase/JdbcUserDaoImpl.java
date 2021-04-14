@@ -9,36 +9,32 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
-public class inDataBaseUserDao implements UserDao {
-    static final String URL = "jdbc:h2:file:C:\\Users\\Максим\\IdeaProjects\\CM_LMS\\src\\database\\please";
+public class JdbcUserDaoImpl implements UserDao {
 
-    private static String queryToGetId() {
+    private static String getIdQuery() {
         return "select id from USER where \"dateOfBirth\" = ? and \"lastName\" = ?";
     }
 
-    private static String getInsertMessageToSaveUser() {
+    private static String insertUserQuery() {
         return "insert into USER ( \"firstName\", \"lastName\" ,ROLE, \"dateOfBirth\")" +
                 "values ( ?,?,?,? )";
     }
 
-    private static String queryToUpdateById() {
+    private static String updateByIdQuery() {
         return "update USER set \"firstName\" = ?, \"lastName\" = ?, ROLE = ?, \"dateOfBirth\" = ? where id = ?;";
     }
 
-    private static String queryToDeleteById() {
+    private static String deleteByIdQuery() {
         return "delete from USER where id = ?;";
     }
 
     @Override
-    public List<User> getAll() throws SQLException {
+    public List<User> getAll() throws Exception {
         List<User> users = new ArrayList<>();
-        Connection connection = null;
-        try {
-            connection = DriverManager.getConnection(URL);
-        } catch (SQLException exception) {
-            exception.printStackTrace();
-        }
+
+        Connection connection = DbUtils.getConnection();
         Statement statement = connection.createStatement();
+
         String query = "select *from USER;";
         ResultSet result = statement.executeQuery(query);
         User user = new Student("-1", "-1", LocalDate.now());
@@ -62,19 +58,14 @@ public class inDataBaseUserDao implements UserDao {
     }
 
     @Override
-    public User saveUser(User user) throws SQLException {
-        if(user.getId() != 0){
+    public User saveUser(User user) throws Exception {
+        if (user.getId() != 0 && user.getId() != null) {
             updateUser(user);
             return user;
         }
-        Connection connection = null;
-        try {
-            connection = DriverManager.getConnection(URL);
-        } catch (SQLException exception) {
-            exception.printStackTrace();
-        }
+        Connection connection = DbUtils.getConnection();
         /*get insert query*/
-        PreparedStatement statement = connection.prepareStatement(getInsertMessageToSaveUser());
+        PreparedStatement statement = connection.prepareStatement(insertUserQuery());
         /*set values  firstName, lastName, role, dateOfBirth*/
         statement.setString(1, user.getFirstName());
         statement.setString(2, user.getLastName());
@@ -94,7 +85,7 @@ public class inDataBaseUserDao implements UserDao {
          * id auto increments in db
          * i find new user in data base with his dateOfBirth and lastName
          * */
-        statement = connection.prepareStatement(queryToGetId());
+        statement = connection.prepareStatement(getIdQuery());
         statement.setString(1, user.getDateofBirth().toString());
         statement.setString(2, user.getLastName());
         ResultSet result = statement.executeQuery();
@@ -109,14 +100,11 @@ public class inDataBaseUserDao implements UserDao {
 
 
     @Override
-    public User getUserById(int id) throws SQLException {
-        Connection connection = null;
-        try {
-            connection = DriverManager.getConnection(URL);
-        } catch (SQLException exception) {
-            exception.printStackTrace();
-        }
+    public User getUserById(int id) throws Exception {
+
+        Connection connection = DbUtils.getConnection();
         Statement statement = connection.createStatement();
+
         String query = "select *from USER where  id =" + id + ";";
         ResultSet result = statement.executeQuery(query);
         User user = new Student("-1", "-1", LocalDate.now());
@@ -136,18 +124,13 @@ public class inDataBaseUserDao implements UserDao {
     }
 
     @Override
-    public boolean updateUser(User user) throws SQLException {
-        if (user.getId() == 0) {
+    public boolean updateUser(User user) throws Exception {
+        if (user.getId() == 0 || user.getId() == null) {
             return false;
         }
-        Connection connection = null;
-        try {
-            connection = DriverManager.getConnection(URL);
-        } catch (SQLException exception) {
-            exception.printStackTrace();
-        }
+        Connection connection = DbUtils.getConnection();
         /*get insert query*/
-        PreparedStatement statement = connection.prepareStatement(queryToUpdateById());
+        PreparedStatement statement = connection.prepareStatement(updateByIdQuery());
         /*set values  firstName, lastName, role, dateOfBirth*/
         statement.setString(1, user.getFirstName());
         statement.setString(2, user.getLastName());
@@ -161,7 +144,7 @@ public class inDataBaseUserDao implements UserDao {
         int res = -999;
         try {
             res = statement.executeUpdate();
-        } catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         } finally {
             // if db doesn't contain  user executeUpdate will return 0 and method return false
@@ -172,14 +155,9 @@ public class inDataBaseUserDao implements UserDao {
 
 
     @Override
-    public boolean deleteUserById(int id) throws SQLException {
-        Connection connection = null;
-        try {
-            connection = DriverManager.getConnection(URL);
-        } catch (SQLException exception) {
-            exception.printStackTrace();
-        }
-        PreparedStatement statement = connection.prepareStatement(queryToDeleteById());
+    public boolean deleteUserById(int id) throws Exception {
+        Connection connection = DbUtils.getConnection();
+        PreparedStatement statement = connection.prepareStatement(deleteByIdQuery());
         statement.setString(1, Integer.toString(id));
         int result = -999;
         try {

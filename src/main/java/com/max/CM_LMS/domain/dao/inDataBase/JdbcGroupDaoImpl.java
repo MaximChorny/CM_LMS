@@ -1,8 +1,6 @@
 package com.max.CM_LMS.domain.dao.inDataBase;
 
 import com.max.CM_LMS.domain.Group;
-import com.max.CM_LMS.domain.Student;
-import com.max.CM_LMS.domain.User;
 import com.max.CM_LMS.domain.dao.GroupDao;
 
 import java.sql.*;
@@ -10,19 +8,41 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
-public class inDataBaseGroupDao implements GroupDao {
-    static final String URL = "jdbc:h2:file:C:\\Users\\Максим\\IdeaProjects\\CM_LMS\\src\\database\\please";
+public class JdbcGroupDaoImpl implements GroupDao {
+
+    /**
+     * @return query for saveGroup, help to get id
+     */
+    private String insertGroupQueryToGetNewId() {
+        return "select id from \"GROUP\" where NAME = ? and DIRECTION = ? and \"startDate\" = ?;";
+    }
+
+    /**
+     * @return query for saveGroup, help to create new line in db
+     */
+    private String insertGroupQuery() {
+        return "insert into \"GROUP\" (NAME, DIRECTION, \"startDate\") " +
+                "values ( ?, ?, ? );";
+    }
+
+    /**
+     * @return query to delete Group by id
+     */
+    private String deleteGroupByIdQuery() {
+        return "delete from \"GROUP\" where id = ?;";
+    }
+
+    private String updateGroupQuery() {
+        return "update \"GROUP\" set NAME = ?, DIRECTION = ?, \"startDate\" = ? where id = ?;";
+    }
 
     @Override
-    public List<Group> getAll() throws SQLException {
+    public List<Group> getAll() throws Exception {
         List<Group> groups = new ArrayList<>();
-        Connection connection = null;
-        try {
-            connection = DriverManager.getConnection(URL);
-        } catch (SQLException exception) {
-            exception.printStackTrace();
-        }
+
+        Connection connection = DbUtils.getConnection();
         Statement statement = connection.createStatement();
+
         String queryToSelect = "select *from \"GROUP\";";
         ResultSet result = statement.executeQuery(queryToSelect);
         Group group = new Group("-1", "-1", LocalDate.now());
@@ -46,19 +66,15 @@ public class inDataBaseGroupDao implements GroupDao {
     }
 
     @Override
-    public Group saveGroup(Group group) throws SQLException {
-        if (group.getId() != 0) {
+    public Group saveGroup(Group group) throws Exception {
+        if (group.getId() != 0 && group.getId() != null) {
             updateGroup(group);
             return group;
         }
-        Connection connection = null;
-        try {
-            connection = DriverManager.getConnection(URL);
-        } catch (SQLException exception) {
-            exception.printStackTrace();
-        }
+        Connection connection = DbUtils.getConnection();
+
         /*get insert query*/
-        PreparedStatement statement = connection.prepareStatement(getInsertMessageToSaveGroup());
+        PreparedStatement statement = connection.prepareStatement(insertGroupQuery());
         /*set values  Name, direction, dateOfStart*/
         statement.setString(1, group.getName());
         statement.setString(2, group.getDirection());
@@ -73,7 +89,7 @@ public class inDataBaseGroupDao implements GroupDao {
          * id auto increments in db
          * i find new group in data base with name, direction, startDate
          * */
-        statement = connection.prepareStatement(getInsertMessageToGetNewId());
+        statement = connection.prepareStatement(insertGroupQueryToGetNewId());
         /*
          * set values
          */
@@ -97,30 +113,14 @@ public class inDataBaseGroupDao implements GroupDao {
 
     }
 
-    /**
-     * @return query for saveGroup, help to get id
-     */
-    private String getInsertMessageToGetNewId() {
-        return "select id from \"GROUP\" where NAME = ? and DIRECTION = ? and \"startDate\" = ?;";
-    }
 
-    /**
-     * @return query for saveGroup, help to create new line in db
-     */
-    private String getInsertMessageToSaveGroup() {
-        return "insert into \"GROUP\" (NAME, DIRECTION, \"startDate\") " +
-                "values ( ?, ?, ? );";
-    }
+
 
     @Override
-    public Group getGroupById(int id) throws SQLException {
-        Connection connection = null;
-        try {
-            connection = DriverManager.getConnection(URL);
-        } catch (SQLException exception) {
-            exception.printStackTrace();
-        }
+    public Group getGroupById(int id) throws Exception {
+        Connection connection = DbUtils.getConnection();
         Statement statement = connection.createStatement();
+
         String query = "select *from \"GROUP\" where  id =" + id + ";";
         ResultSet result = statement.executeQuery(query);
         Group group = new Group("-1", "-1", LocalDate.now());
@@ -139,25 +139,14 @@ public class inDataBaseGroupDao implements GroupDao {
         return group;
     }
 
-    /**
-     * @return query to delete Group by id
-     */
-    private String queryToDeleteGroupById() {
-        return "delete from \"GROUP\" where id = ?;";
-    }
 
     @Override
-    public boolean updateGroup(Group group) throws SQLException {
+    public boolean updateGroup(Group group) throws Exception {
         if (group.getId() == 0 || group.getId() == null) {
             return false;
         }
-        Connection connection = null;
-        try {
-            connection = DriverManager.getConnection(URL);
-        } catch (SQLException exception) {
-            exception.printStackTrace();
-        }
-        PreparedStatement statement = connection.prepareStatement(queryToUpdateGroup());
+        Connection connection = DbUtils.getConnection();
+        PreparedStatement statement = connection.prepareStatement(updateGroupQuery());
         statement.setString(1, group.getName());
         statement.setString(2, group.getDirection());
         statement.setString(3, group.getStartDate().toString());
@@ -167,20 +156,12 @@ public class inDataBaseGroupDao implements GroupDao {
         return res > 0;
     }
 
-    private String queryToUpdateGroup() {
-        return "update \"GROUP\" set NAME = ?, DIRECTION = ?, \"startDate\" = ? where id = ?;";
-    }
 
     @Override
-    public boolean deleteGroupById(int id) throws SQLException {
-        Connection connection = null;
-        try {
-            connection = DriverManager.getConnection(URL);
-        } catch (SQLException exception) {
-            exception.printStackTrace();
-        }
+    public boolean deleteGroupById(int id) throws Exception {
+        Connection connection = DbUtils.getConnection();
         /*get insert query*/
-        PreparedStatement statement = connection.prepareStatement(queryToDeleteGroupById());
+        PreparedStatement statement = connection.prepareStatement(deleteGroupByIdQuery());
         /* set id*/
         statement.setString(1, Integer.toString(id));
         int result = -999;

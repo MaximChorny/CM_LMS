@@ -10,7 +10,7 @@ public class Group {
 
     private static final Logger logger = LogManager.getLogger(Group.class);
 
-    private Integer id = 0;
+    private Integer id = null;
     private String name;
     private String direction;
     private LocalDate startDate;
@@ -20,23 +20,6 @@ public class Group {
     private Feed feed;
     private ArrayList<Lesson> lessons;
 
-    public boolean addLeson(Lesson lesson) {
-        //   logger.info( lesson.toString());
-        if (this.lessons == null) {
-            this.lessons = new ArrayList<>();
-        }
-        return this.lessons.add(lesson);
-    }
-
-    public boolean addStudent(Student student) {
-
-        if (this.students == null) {
-            this.students = new HashSet<>();
-        }
-
-        return this.students.add(student);
-
-    }
 
     public Group(String name, String direction, LocalDate startDate) {
         this.name = name;
@@ -97,14 +80,6 @@ public class Group {
         return name;
     }
 
-    public boolean addTeacher(Teacher teacher) {
-        if (this.teachers == null) {
-            this.teachers = new HashSet<>();
-        }
-        return this.teachers.add(teacher);
-
-    }
-
     public String getDirection() {
         return direction;
     }
@@ -123,6 +98,40 @@ public class Group {
 
     public void setStartDate(LocalDate startDate) {
         this.startDate = startDate;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public Integer getId() {
+        return id;
+    }
+
+    public boolean addTeacher(Teacher teacher) {
+        if (this.teachers == null) {
+            this.teachers = new HashSet<>();
+        }
+        return this.teachers.add(teacher);
+
+    }
+
+    public boolean addLeson(Lesson lesson) {
+        //   logger.info( lesson.toString());
+        if (this.lessons == null) {
+            this.lessons = new ArrayList<>();
+        }
+        return this.lessons.add(lesson);
+    }
+
+    public boolean addStudent(Student student) {
+
+        if (this.students == null) {
+            this.students = new HashSet<>();
+        }
+
+        return this.students.add(student);
+
     }
 
     private String getAllTeachersNamesString() {
@@ -173,11 +182,5 @@ public class Group {
         return Objects.hash(id);
     }
 
-    public void setId(int id) {
-        this.id = id;
-    }
 
-    public Integer getId() {
-        return id;
-    }
 }

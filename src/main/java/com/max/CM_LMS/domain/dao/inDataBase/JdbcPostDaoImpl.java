@@ -8,36 +8,34 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
-public class inDataBasePostDao implements PostDao {
-    static final String URL = "jdbc:h2:file:C:\\Users\\Максим\\IdeaProjects\\CM_LMS\\src\\database\\please";
+public class JdbcPostDaoImpl implements PostDao {
+    final JdbcUserDaoImpl userFromBase = new JdbcUserDaoImpl();
+    private final JdbcGroupDaoImpl groupFromBase = new JdbcGroupDaoImpl();
 
-    private String getInsertMessageToGetNewId() {
+    private String insertPostToGetNewIdQuery() {
         return "select  id from \"Post\" where TEXT= ? and  \"datePost\" = ?;";
     }
 
-    private String getInsertMessageToSavePost() {
+    private String insertPostQuery() {
         return "insert into \"Post\"(text, \"datePost\", id_feed, id_user) " +
                 "values ( ?, ?, ?, ?);";
     }
 
-    private String queryToDeletePostById() {
+    private String deletePostByIdQuery() {
         return "delete from \"Post\" where id = ?;";
     }
 
-    private String queryToUpdatePost() {
+    private String updatePostQuery() {
         return "update \"Post\" set TEXT = ?, \"datePost\" = ?, ID_FEED = ?, ID_USER = ? where id = ?;";
     }
 
     @Override
-    public List<Post> getAll() throws SQLException {
+    public List<Post> getAll() throws Exception {
         List<Post> posts = new ArrayList<>();
-        Connection connection = null;
-        try {
-            connection = DriverManager.getConnection(URL);
-        } catch (SQLException exception) {
-            exception.printStackTrace();
-        }
+
+        Connection connection = DbUtils.getConnection();
         Statement statement = connection.createStatement();
+
         String query = "select *from \"Post\";";
         ResultSet result = statement.executeQuery(query);
         Post post = new Post("-1", LocalDate.now());
@@ -49,7 +47,7 @@ public class inDataBasePostDao implements PostDao {
             post.setText(result.getString(2));
             post.setDatePost(LocalDate.parse(result.getString(3)));
             post.setFeed(smallQueryToGetFeed(connection, result.getInt(4)));
-            post.setAuthor(new inDataBaseUserDao().getUserById(result.getInt(5)));
+            post.setAuthor(userFromBase.getUserById(result.getInt(5)));
             posts.add(post);
         }
         //case when db is empty
@@ -60,32 +58,25 @@ public class inDataBasePostDao implements PostDao {
     }
 
     @Override
-    public Post savePost(Post post) throws SQLException {
-        if(post.getId()!=0){
+    public Post savePost(Post post) throws Exception {
+        if (post.getId() != 0 && post.getId() != null) {
             updatePost(post);
             return post;
         }
-        Connection connection = null;
-        try {
-            connection = DriverManager.getConnection(URL);
-        } catch (SQLException exception) {
-            exception.printStackTrace();
-        }
+        Connection connection = DbUtils.getConnection();
         /*get insert query*/
-        PreparedStatement statement = connection.prepareStatement(getInsertMessageToSavePost());
+        PreparedStatement statement = connection.prepareStatement(insertPostQuery());
         /*set values  text,  datePost, idFeed, idUser*/
         statement.setString(1, post.getText());
         statement.setString(2, post.getDatePost().toString());
         if (post.getFeed().getId() == 0) {
-            statement.setString(3,"null");
-        }
-        else {
+            statement.setString(3, "null");
+        } else {
             statement.setString(3, post.getFeed().getId().toString());
         }
-        if(post.getAuthor().getId() == 0 ){
-            statement.setString(4,"null");
-        }
-        else {
+        if (post.getAuthor().getId() == 0) {
+            statement.setString(4, "null");
+        } else {
             statement.setString(4, post.getAuthor().getId().toString());
         }
         /*executing a query*/
@@ -98,7 +89,7 @@ public class inDataBasePostDao implements PostDao {
          * id auto increments in db
          * i find new post in data base with text
          * */
-        statement = connection.prepareStatement(getInsertMessageToGetNewId());
+        statement = connection.prepareStatement(insertPostToGetNewIdQuery());
         /*
          * set values
          */
@@ -122,24 +113,21 @@ public class inDataBasePostDao implements PostDao {
 
 
     @Override
-    public Post getPostById(int id) throws SQLException {
-        Connection connection = null;
-        try {
-            connection = DriverManager.getConnection(URL);
-        } catch (SQLException exception) {
-            exception.printStackTrace();
-        }
+    public Post getPostById(int id) throws Exception {
+
+        Connection connection = DbUtils.getConnection();
         Statement statement = connection.createStatement();
+
         String query = "select *from \"Post\" where id = " + id + ";";
         ResultSet result = statement.executeQuery(query);
-        Post post = new Post("-1",LocalDate.now());
+        Post post = new Post("-1", LocalDate.now());
         while (result.next()) {
             //set values
             post.setId(result.getInt(1));
             post.setText(result.getString(2));
             post.setDatePost(LocalDate.parse(result.getString(3)));
             post.setFeed(smallQueryToGetFeed(connection, result.getInt(4)));
-            post.setAuthor(new inDataBaseUserDao().getUserById(result.getInt(5)));
+            post.setAuthor(userFromBase.getUserById(result.getInt(5)));
         }
         /* we haven`t found group with input id
          * we need to return null
@@ -152,36 +140,32 @@ public class inDataBasePostDao implements PostDao {
 
     /**
      * i use it to avoid recursion
+     *
      * @return feed from db
      * @throws SQLException
      */
-    private Feed smallQueryToGetFeed(Connection connection, int id) throws SQLException {
+    private Feed smallQueryToGetFeed(Connection connection, int id) throws Exception {
         Statement statement = connection.createStatement();
         String query = "select *from FEED where ID= " + id + " ;";
         ResultSet result = statement.executeQuery(query);
-        Feed feed = new Feed(new Group("-1","-1",LocalDate.now()));
-        while (result.next()){
-            feed = new Feed(new inDataBaseGroupDao().getGroupById(id));
+        Feed feed = new Feed(new Group("-1", "-1", LocalDate.now()));
+        while (result.next()) {
+            feed = new Feed(groupFromBase.getGroupById(id));
         }
-        if(feed.getGroup().getName().equals("-1")) {
+        if (feed.getGroup().getName().equals("-1")) {
             return null;
         }
         return feed;
     }
 
     @Override
-    public boolean updatePost(Post post) throws SQLException {
-        if (post.getId() == 0) {
+    public boolean updatePost(Post post) throws Exception {
+        if (post.getId() == 0 || post.getId() == null) {
             return false;
         }
-        Connection connection = null;
-        try {
-            connection = DriverManager.getConnection(URL);
-        } catch (SQLException exception) {
-            exception.printStackTrace();
-        }
+        Connection connection = DbUtils.getConnection();
 
-        PreparedStatement statement = connection.prepareStatement(queryToUpdatePost());
+        PreparedStatement statement = connection.prepareStatement(updatePostQuery());
         /*set value  text , date , feed, author id to update*/
         statement.setString(1, post.getText());
         statement.setString(2, post.getDatePost().toString());
@@ -191,22 +175,17 @@ public class inDataBasePostDao implements PostDao {
         int res = -999;
         try {
             res = statement.executeUpdate();
-        } catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
-            return res > 0;
+        return res > 0;
     }
 
     @Override
-    public boolean deletePostById(int id) throws SQLException {
-        Connection connection = null;
-        try {
-            connection = DriverManager.getConnection(URL);
-        } catch (SQLException exception) {
-            exception.printStackTrace();
-        }
+    public boolean deletePostById(int id) throws Exception {
+        Connection connection = DbUtils.getConnection();
         /*get insert query*/
-        PreparedStatement statement = connection.prepareStatement(queryToDeletePostById());
+        PreparedStatement statement = connection.prepareStatement(deletePostByIdQuery());
         /* set id*/
         statement.setString(1, Integer.toString(id));
         int result = -999;

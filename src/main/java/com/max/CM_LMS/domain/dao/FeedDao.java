@@ -6,13 +6,13 @@ import java.sql.SQLException;
 import java.util.List;
 
 public interface FeedDao {
-    List<Feed> getAll() throws SQLException;
+    List<Feed> getAll() throws Exception;
 
-    Feed saveFeed(Feed feed) throws SQLException;
+    Feed saveFeed(Feed feed) throws Exception;
 
-    Feed getFeedById(int id) throws SQLException;
+    Feed getFeedById(int id) throws Exception;
 
-    boolean updateFeed(Feed feed) throws SQLException;
+    boolean updateFeed(Feed feed) throws Exception;
 
-    boolean deleteFeedById(int id) throws SQLException;
+    boolean deleteFeedById(int id) throws Exception;
 }

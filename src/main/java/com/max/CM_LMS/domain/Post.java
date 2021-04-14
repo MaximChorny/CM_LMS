@@ -5,7 +5,7 @@ import java.util.Objects;
 
 public class Post {
 
-    private Integer id = 0;
+    private Integer id = null;
     private String text;
     private LocalDate datePost;
     private Feed feed;

@@ -10,31 +10,28 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-public class inDataBaseLessonDao implements LessonDao {
-    static final String URL = "jdbc:h2:file:C:\\Users\\Максим\\IdeaProjects\\CM_LMS\\src\\database\\please";
+public class JdbcLessonDaoImpl implements LessonDao {
+    final JdbcHomeTaskImpl homeTaskFromBase = new JdbcHomeTaskImpl();
 
-    private String getInsertMessageToSaveLesson() {
+    private String insertLessonQuery() {
         return "insert into LESSON(topic, date, materials) VALUES ( ?, ?, ?);";
     }
 
-    private String queryToDeleteLessonById() {
+    private String deleteLessonByIdQuery() {
         return "delete from LESSON where ID = ?;";
     }
 
-    private String queryToUpdateLesson() {
+    private String updateLessonQuery() {
         return "update LESSON set TOPIC = ?, DATE = ?, MATERIALS = ? where ID = ?;";
     }
 
     @Override
-    public List<Lesson> getAll() throws SQLException {
+    public List<Lesson> getAll() throws Exception {
         List<Lesson> lessons = new ArrayList<>();
-        Connection connection = null;
-        try {
-            connection = DriverManager.getConnection(URL);
-        } catch (SQLException exception) {
-            exception.printStackTrace();
-        }
+
+        Connection connection = DbUtils.getConnection();
         Statement statement = connection.createStatement();
+
         String queryToSelect = "select * from LESSON;";
         ResultSet result = statement.executeQuery(queryToSelect);
         Lesson lesson = new Lesson("-1", LocalDate.now());
@@ -56,19 +53,14 @@ public class inDataBaseLessonDao implements LessonDao {
     }
 
     @Override
-    public Lesson saveLessonTask(Lesson lesson) throws SQLException {
-        if (lesson.getId() != 0) {
+    public Lesson saveLessonTask(Lesson lesson) throws Exception {
+        if (lesson.getId() != 0 && lesson.getId() != null ) {
             updateLesson(lesson);
             return lesson;
         }
-        Connection connection = null;
-        try {
-            connection = DriverManager.getConnection(URL);
-        } catch (SQLException exception) {
-            exception.printStackTrace();
-        }
+        Connection connection = DbUtils.getConnection();
         /*get insert query*/
-        PreparedStatement statement = connection.prepareStatement(getInsertMessageToSaveLesson(), Statement.RETURN_GENERATED_KEYS);
+        PreparedStatement statement = connection.prepareStatement(insertLessonQuery(), Statement.RETURN_GENERATED_KEYS);
         statement.setString(1, lesson.getTopic());
         statement.setString(2, lesson.getDate().toString());
         statement.setString(3, lesson.getMaterials());
@@ -76,7 +68,7 @@ public class inDataBaseLessonDao implements LessonDao {
         Iterator<HomeTask>iterator = lesson.getHomeTasks().iterator();
         // update all homeTask
         while (iterator.hasNext()){
-            new inDataBaseHomeTaskDao().saveHomeTask(iterator.next());
+            homeTaskFromBase.saveHomeTask(iterator.next());
         }
         /*executing a query*/
         int newId = 0;
@@ -96,14 +88,11 @@ public class inDataBaseLessonDao implements LessonDao {
 
 
     @Override
-    public Lesson getLessonById(int id) throws SQLException {
-        Connection connection = null;
-        try {
-            connection = DriverManager.getConnection(URL);
-        } catch (SQLException exception) {
-            exception.printStackTrace();
-        }
+    public Lesson getLessonById(int id) throws Exception {
+
+        Connection connection = DbUtils.getConnection();
         Statement statement = connection.createStatement();
+
         String query = "select *from LESSON where ID= " + id + ";";
         ResultSet result = statement.executeQuery(query);
         Lesson lesson = new Lesson("-1", LocalDate.now());
@@ -122,18 +111,13 @@ public class inDataBaseLessonDao implements LessonDao {
     }
 
     @Override
-    public boolean updateLesson(Lesson lesson) throws SQLException {
-        if (lesson.getId() == 0) {
+    public boolean updateLesson(Lesson lesson) throws Exception {
+        if (lesson.getId() == 0 || lesson.getId() == null) {
             return false;
         }
-        Connection connection = null;
-        try {
-            connection = DriverManager.getConnection(URL);
-        } catch (SQLException exception) {
-            exception.printStackTrace();
-        }
+        Connection connection = DbUtils.getConnection();
+        PreparedStatement statement = connection.prepareStatement(updateLessonQuery());
 
-        PreparedStatement statement = connection.prepareStatement(queryToUpdateLesson());
         /* set values topic, date, materials, id to update*/
         statement.setString(1, lesson.getTopic());
         statement.setString(2, lesson.getDate().toString());
@@ -143,7 +127,7 @@ public class inDataBaseLessonDao implements LessonDao {
         Iterator<HomeTask>iterator = lesson.getHomeTasks().iterator();
         // update all hometasks
         while (iterator.hasNext()){
-            new inDataBaseHomeTaskDao().updateHomeTask(iterator.next());
+            homeTaskFromBase.updateHomeTask(iterator.next());
         }
         int res = -999;
         res = statement.executeUpdate();
@@ -153,15 +137,10 @@ public class inDataBaseLessonDao implements LessonDao {
 
 
     @Override
-    public boolean deleteLessonById(int id) throws SQLException {
-        Connection connection = null;
-        try {
-            connection = DriverManager.getConnection(URL);
-        } catch (SQLException exception) {
-            exception.printStackTrace();
-        }
+    public boolean deleteLessonById(int id) throws Exception {
+        Connection connection = DbUtils.getConnection();
         /*get insert query*/
-        PreparedStatement statement = connection.prepareStatement(queryToDeleteLessonById());
+        PreparedStatement statement = connection.prepareStatement(deleteLessonByIdQuery());
         /* set id*/
         statement.setString(1, Integer.toString(id));
         int result = -999;

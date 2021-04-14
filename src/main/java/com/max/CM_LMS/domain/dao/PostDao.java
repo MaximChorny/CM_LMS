@@ -6,13 +6,13 @@ import java.sql.SQLException;
 import java.util.List;
 
 public interface PostDao {
-    List<Post> getAll() throws SQLException;
+    List<Post> getAll() throws Exception;
 
-    Post savePost(Post post) throws SQLException;
+    Post savePost(Post post) throws SQLException, Exception;
 
-    Post getPostById(int id) throws SQLException;
+    Post getPostById(int id) throws Exception;
 
-    boolean updatePost(Post post) throws SQLException;
+    boolean updatePost(Post post) throws Exception;
 
-    boolean deletePostById(int id) throws SQLException;
+    boolean deletePostById(int id) throws Exception;
 }

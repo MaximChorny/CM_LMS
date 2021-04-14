@@ -7,13 +7,13 @@ import java.sql.SQLException;
 import java.util.List;
 
 public interface UserDao {
-    List<User> getAll() throws SQLException;
+    List<User> getAll() throws SQLException, Exception;
 
-    User saveUser(User user) throws SQLException;
+    User saveUser(User user) throws SQLException, Exception;
 
-    User getUserById(int id) throws SQLException;
+    User getUserById(int id) throws SQLException, Exception;
 
-    boolean updateUser(User user) throws SQLException;
+    boolean updateUser(User user) throws Exception;
 
-    boolean deleteUserById(int id) throws SQLException;
+    boolean deleteUserById(int id) throws Exception;
 }

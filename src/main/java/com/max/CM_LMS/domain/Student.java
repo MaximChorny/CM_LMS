@@ -27,17 +27,16 @@ public class Student extends User {
         this.group = group;
     }
 
+    public List<HomeWork> getHomeWorks() {
+        return homeWorks;
+    }
+
     public boolean addHomework(HomeWork homeWork) {
         if (homeWorks == null) {
             homeWorks = new ArrayList<>();
         }
         return homeWorks.add(homeWork);
     }
-
-    public List<HomeWork> getHomeWorks() {
-        return homeWorks;
-    }
-
     @Override
     public String toString() {
         return "Student{" + "Id=" + super.getId() +

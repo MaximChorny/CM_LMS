@@ -11,70 +11,62 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-public class inDataBaseFeedDao implements FeedDao {
-    static final String URL = "jdbc:h2:file:C:\\Users\\Максим\\IdeaProjects\\CM_LMS\\src\\database\\please";
+public class JdbcFeedDaoImpl implements FeedDao {
+private final JdbcGroupDaoImpl groupFromBase = new JdbcGroupDaoImpl();
+private  final JdbcPostDaoImpl postFromBase = new JdbcPostDaoImpl();
 
-    private String getInsertMessageToGetNewId() {
+    private String insertFeedQueryToGetNewId() {
         return "select id from FEED where ID_GROUP = ?;";
     }
 
-    private String getInsertMessageToSaveFeed() {
+    private String insertFeedQuery() {
         return "insert into FEED (ID_GROUP) values ( ? );";
     }
 
-    private String queryToDeleteFeedById() {
+    private String deleteFeedByIdQuery() {
         return "delete  from FEED where  ID = ?;";
     }
 
-    private String queryToUpdateFeed() {
+    private String updateFeedQuery() {
         return "update FEED set ID_GROUP = ? where id = ?;";
     }
+
     @Override
-    public List<Feed> getAll() throws SQLException {
+    public List<Feed> getAll() throws Exception {
         List<Feed> feeds = new ArrayList<>();
-        Connection connection = null;
-        try {
-            connection = DriverManager.getConnection(URL);
-        } catch (SQLException exception) {
-            exception.printStackTrace();
-        }
+
+        Connection connection = DbUtils.getConnection();
         Statement statement = connection.createStatement();
+
         String queryToSelect = "select * from FEED;";
         ResultSet result = statement.executeQuery(queryToSelect);
-        Feed feed = new Feed(new Group("-1", "-1", LocalDate.now()));
+        Feed feed;
+        Group group = groupFromBase.getGroupById(result.getInt(2));
+        if (group == null) {
+            return null;
+        }
         while (result.next()) {
             // create new feed with another pointer
             feed = new Feed(new Group("-1", "-1", LocalDate.now()));
             // set values
             feed.setId(result.getInt(1));
-            feed.setGroup(new inDataBaseGroupDao().getGroupById(result.getInt(2)));
+            feed.setGroup(group);
             feeds.add(feed);
-        }
-        /*  data base is empty
-         * we need to return null
-         */
-        if (feed.getGroup().getName().equals("-1")) {
-            return null;
         }
         return feeds;
     }
 
     @Override
-    public Feed saveFeed(Feed feed) throws SQLException {
-        if (feed.getId() != 0) {
+    public Feed saveFeed(Feed feed) throws Exception {
+        if (feed.getId() != 0 && feed.getId() != null) {
             updateFeed(feed);
             return feed;
         }
-        Connection connection = null;
-        try {
-            connection = DriverManager.getConnection(URL);
-        } catch (SQLException exception) {
-            exception.printStackTrace();
-        }
+        Connection connection = DbUtils.getConnection();
         /*get insert query*/
-        PreparedStatement statement = connection.prepareStatement(getInsertMessageToSaveFeed());
+        PreparedStatement statement = connection.prepareStatement(insertFeedQuery());
         if (feed.getGroup().getId() == 0) {
-            new inDataBaseGroupDao().saveGroup(feed.getGroup());
+          groupFromBase.saveGroup(feed.getGroup());
         }
         statement.setString(1, feed.getGroup().getId().toString());
         /*executing a query*/
@@ -87,7 +79,7 @@ public class inDataBaseFeedDao implements FeedDao {
          * id auto increments in db
          * i find new post in data base with text
          * */
-        statement = connection.prepareStatement(getInsertMessageToGetNewId());
+        statement = connection.prepareStatement(insertFeedQueryToGetNewId());
         ResultSet result = statement.executeQuery();
 
         int newId = 0;
@@ -102,26 +94,21 @@ public class inDataBaseFeedDao implements FeedDao {
         feed.setId(newId);
         Iterator<Post> iterator = feed.getPosts().iterator();
         while (iterator.hasNext()) {
-            new inDataBasePostDao().savePost(iterator.next());
+           postFromBase.savePost(iterator.next());
         }
         return feed;
     }
 
     @Override
-    public Feed getFeedById(int id) throws SQLException {
-        Connection connection = null;
-        try {
-            connection = DriverManager.getConnection(URL);
-        } catch (SQLException exception) {
-            exception.printStackTrace();
-        }
+    public Feed getFeedById(int id) throws Exception {
+        Connection connection = DbUtils.getConnection();
         Statement statement = connection.createStatement();
         String query = "select * from FEED where ID = " + id + ";";
         ResultSet result = statement.executeQuery(query);
         Feed feed = new Feed(new Group("-1", "-1", LocalDate.now()));
         while (result.next()) {
             feed.setId(result.getInt(1));
-            feed.setGroup(new inDataBaseGroupDao().getGroupById(result.getInt(2)));
+            feed.setGroup(groupFromBase.getGroupById(result.getInt(2)));
         }
         if (feed.getGroup().getName().equals("-1")) {
             return null;
@@ -130,23 +117,19 @@ public class inDataBaseFeedDao implements FeedDao {
     }
 
     @Override
-    public boolean updateFeed(Feed feed) throws SQLException {
-        if (feed.getId() == 0) {
+    public boolean updateFeed(Feed feed) throws Exception {
+        if (feed.getId() == null || feed.getId() == 0) {
             return false;
         }
-        Connection connection = null;
-        try {
-            connection = DriverManager.getConnection(URL);
-        } catch (SQLException exception) {
-            exception.printStackTrace();
-        }
-        PreparedStatement statement = connection.prepareStatement(queryToUpdateFeed());
-        Group group = new inDataBaseGroupDao().saveGroup(feed.getGroup());
+        Connection connection = DbUtils.getConnection();
+        PreparedStatement statement = connection.prepareStatement(updateFeedQuery());
+
+        Group group = groupFromBase.saveGroup(feed.getGroup());
         statement.setString(1, group.getId().toString());
         statement.setString(2, feed.getId().toString());
         Iterator<Post> iterator = feed.getPosts().iterator();
         while (iterator.hasNext()) {
-            new inDataBasePostDao().savePost(iterator.next());
+          postFromBase.savePost(iterator.next());
         }
         int res = -999;
         res = statement.executeUpdate();
@@ -154,15 +137,10 @@ public class inDataBaseFeedDao implements FeedDao {
     }
 
     @Override
-    public boolean deleteFeedById(int id) throws SQLException {
-        Connection connection = null;
-        try {
-            connection = DriverManager.getConnection(URL);
-        } catch (SQLException exception) {
-            exception.printStackTrace();
-        }
+    public boolean deleteFeedById(int id) throws Exception {
+        Connection connection = DbUtils.getConnection();
         /*get insert query*/
-        PreparedStatement statement = connection.prepareStatement(queryToDeleteFeedById());
+        PreparedStatement statement = connection.prepareStatement(deleteFeedByIdQuery());
         /* set id*/
         statement.setString(1, Integer.toString(id));
         int result = -999;
