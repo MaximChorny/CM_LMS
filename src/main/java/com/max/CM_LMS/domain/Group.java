@@ -1,13 +1,16 @@
 package com.max.CM_LMS.domain;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 
 public class Group {
 
+    private static final Logger logger = LogManager.getLogger(Group.class);
+
+    private Integer id = null;
     private String name;
     private String direction;
     private LocalDate startDate;
@@ -17,12 +20,6 @@ public class Group {
     private Feed feed;
     private ArrayList<Lesson> lessons;
 
-    public void addLeson(Lesson lesson) {
-        if (this.lessons == null) {
-            this.lessons = new ArrayList<>();
-        }
-        this.lessons.add(lesson);
-    }
 
     public Group(String name, String direction, LocalDate startDate) {
         this.name = name;
@@ -83,20 +80,6 @@ public class Group {
         return name;
     }
 
-    public void addLesson(Lesson lesson) {
-        if (this.lessons == null) {
-            this.lessons = new ArrayList<>();
-        }
-        this.lessons.add(lesson);
-    }
-
-    public void addTeacher(Teacher teacher) {
-        if (this.teachers == null) {
-            this.teachers = new HashSet<>();
-        }
-        this.teachers.add(teacher);
-    }
-
     public String getDirection() {
         return direction;
     }
@@ -117,35 +100,87 @@ public class Group {
         this.startDate = startDate;
     }
 
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public Integer getId() {
+        return id;
+    }
+
+    public boolean addTeacher(Teacher teacher) {
+        if (this.teachers == null) {
+            this.teachers = new HashSet<>();
+        }
+        return this.teachers.add(teacher);
+
+    }
+
+    public boolean addLeson(Lesson lesson) {
+        //   logger.info( lesson.toString());
+        if (this.lessons == null) {
+            this.lessons = new ArrayList<>();
+        }
+        return this.lessons.add(lesson);
+    }
+
+    public boolean addStudent(Student student) {
+
+        if (this.students == null) {
+            this.students = new HashSet<>();
+        }
+
+        return this.students.add(student);
+
+    }
+
+    private String getAllTeachersNamesString() {
+        StringBuilder result = new StringBuilder();
+
+        Iterator<Teacher> iterator = teachers.iterator();
+        while (iterator.hasNext()) {
+            Teacher item = iterator.next();
+            result.append(item.getFirstName()).append(" ").append(item.getLastName()).append(", ");
+        }
+        return result.substring(0, result.length() - 2);
+    }
+
+    private String getAllStudentsNamesString() {
+        String res = "";
+        Iterator<Student> iterator = students.iterator();
+        while (iterator.hasNext()) {
+            Student item = iterator.next();
+            res += item.getFirstName() + " " + item.getLastName() + ", ";
+        }
+        return res.substring(0, res.lastIndexOf(','));
+    }
+
     @Override
     public String toString() {
         return "Group{" +
-                "name='" + name + '\'' +
+                " name='" + name + '\'' +
                 ", direction='" + direction + '\'' +
                 ", startDate=" + startDate +
-                ", teachers=" + teachers +
-                ", students=" + students +
+                ", teachers= " + getAllTeachersNamesString() +
+                ", students= " + getAllStudentsNamesString() +
                 ", feed=" + feed +
                 ", lessons=" + lessons +
                 '}';
     }
+
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Group group = (Group) o;
-        return name.equals(group.name) &&
-                direction.equals(group.direction) &&
-                startDate.equals(group.startDate) &&
-                teachers.equals(group.teachers) &&
-                students.equals(group.students) &&
-                feed.equals(group.feed) &&
-                lessons.equals(group.lessons);
+        return Objects.equals(id, group.id);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(name, direction, startDate, teachers, students, feed, lessons);
+        return Objects.hash(id);
     }
+
+
 }
