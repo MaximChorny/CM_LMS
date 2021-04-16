@@ -1,8 +1,6 @@
 package com.max.CM_LMS.domain.dao.factory;
 
-import com.max.CM_LMS.domain.dao.FeedDao;
-import com.max.CM_LMS.domain.dao.GroupDao;
-import com.max.CM_LMS.domain.dao.LessonDao;
+import com.max.CM_LMS.domain.dao.*;
 
 public class DaoAbstractFactory {
     public static final String In_Memory = "InMemory";
@@ -10,11 +8,19 @@ public class DaoAbstractFactory {
     private final GroupDaoFactory groupDaoFactory;
     private final LessonDaoFactory lessonDaoFactory;
     private final FeedDaoFactory feedDaoFactory;
+    private final UserDaoFactory userDaoFactory;
+    private final PostDaoFactory postDaoFactory;
+    private final HomeTaskDaoFactory homeTaskDaoFactory;
+    private final  HomeWorkDaoFactory homeWorkDaoFactory;
 
-    public DaoAbstractFactory(LessonDaoFactory lessonDaoFactory, FeedDaoFactory feedDaoFactory) {
+    public DaoAbstractFactory() {
         this.feedDaoFactory = new FeedDaoFactory();
         this.lessonDaoFactory = new LessonDaoFactory();
         this.groupDaoFactory = new GroupDaoFactory();
+        this.userDaoFactory = new UserDaoFactory();
+        this.postDaoFactory = new PostDaoFactory();
+        this.homeTaskDaoFactory = new HomeTaskDaoFactory();
+        this.homeWorkDaoFactory = new HomeWorkDaoFactory();
     }
 
     public GroupDao createGroupDao(String type) {
@@ -47,13 +53,45 @@ public class DaoAbstractFactory {
         return null;
     }
 
-/*
- if(In_Memory.equalsIgnoreCase(type)){
-            return
+    public UserDao createUserDao(String type) {
+        if (In_Memory.equalsIgnoreCase(type)) {
+            return userDaoFactory.getInMemoryUserDao();
         }
-        if(JDBC.equalsIgnoreCase(type)){
-            return
+        if (JDBC.equalsIgnoreCase(type)) {
+            return userDaoFactory.getJdbcUserDao();
         }
         return null;
-* */
+    }
+
+    public PostDao createPostDao(String type){
+        if(In_Memory.equalsIgnoreCase(type)){
+            return postDaoFactory.getInMemoryPostDao();
+        }
+        if(JDBC.equalsIgnoreCase(type)){
+            return postDaoFactory.getJdbcPostDao();
+        }
+        return null;
+    }
+
+    public HomeTaskDao createHomeTask(String type){
+        if(In_Memory.equalsIgnoreCase(type)){
+            return homeTaskDaoFactory.getInMemoryHomeTaskDao();
+        }
+        if(JDBC.equalsIgnoreCase(type)){
+            return homeTaskDaoFactory.getJdbcHomeTaskDao();
+        }
+        return null;
+    }
+
+    public HomeWorkDao createHomeWork(String type){
+        if(In_Memory.equalsIgnoreCase(type)){
+            return homeWorkDaoFactory.getInMemoryHomeWorkDao();
+        }
+        if(JDBC.equalsIgnoreCase(type)){
+            return homeWorkDaoFactory.getJdbcHomeWorkDao();
+        }
+        return null;
+
+    }
+
 }

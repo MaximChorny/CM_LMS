@@ -1,19 +1,28 @@
 package com.max.CM_LMS;
 
 import com.max.CM_LMS.domain.Presentation.StarView;
+import com.max.CM_LMS.domain.dao.*;
+import com.max.CM_LMS.domain.dao.factory.DaoAbstractFactory;
 import org.apache.commons.cli.*;
-
-import java.util.Date;
 
 public class AppRunner {
 
     public static void main(String[] args) {
-        checkArgs(args);
+        String dbType = checkArgs(args);
+        DaoAbstractFactory factory = new DaoAbstractFactory();
+        FeedDao feedDao = factory.createFeedDao(dbType);
+        GroupDao groupDao = factory.createGroupDao(dbType);
+        HomeTaskDao homeTaskDao = factory.createHomeTask(dbType);
+        HomeWorkDao homeWorkDao = factory.createHomeWork(dbType);
+        LessonDao lessonDao = factory.createLessonDao(dbType);
+        PostDao postDao = factory.createPostDao(dbType);
+        UserDao userDao = factory.createUserDao(dbType);
+
         StarView first = new StarView();
         first.run();
     }
 
-    private static void checkArgs(String[] args) {
+    private static String checkArgs(String[] args) {
         Options options = new Options();
         Option option1 = Option.builder()
                 .argName("db")      // название
@@ -32,11 +41,9 @@ public class AppRunner {
         }
         if (cmd.hasOption("dbType")) {
             String str = cmd.getOptionValue("dbType");
-            if (str.equals("InMemory")) {
-                System.out.println("you choose InMemory");
-            } else {
-                System.out.println("you choose jdbc");
-            }
+            return str;
+        } else {
+            return "InMemory";
         }
     }
 
